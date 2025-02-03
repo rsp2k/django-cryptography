@@ -23,9 +23,9 @@ from ..utils.crypto import HASHES, InvalidAlgorithm, constant_time_compare, salt
 
 try:
     # Django 5
-    from django.core.singing import Signer # type: ignore
-    b62_decode = Signer.unsign
-    b62_encode = Signer.sign    
+    from django.core.singing import Signer as django_signer # type: ignore
+    b62_decode = django_signer.unsign
+    b62_encode = django_signer.sign
 
 except ImportError:
     # Django 4.0
