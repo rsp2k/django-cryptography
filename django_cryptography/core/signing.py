@@ -22,12 +22,17 @@ from ..typing import Algorithm, Serializer
 from ..utils.crypto import HASHES, InvalidAlgorithm, constant_time_compare, salted_hmac
 
 try:
-    from django.core.signing import b62_decode, b62_encode  # type: ignore
+    # Django 4.0+
+    from django.core.singing import Signer
+    b62_decode = Signer.unsign
+    b62_encode = Signer.sign
 except ImportError:
-    from django.utils import baseconv
-
-    # Required for Django 3.2 support
-    b62_decode, b62_encode = baseconv.base62.decode, baseconv.base62.encode
+    try:
+        from django.core.signing import b62_decode, b62_encode  # type: ignore
+    except ImportError:
+        # Required for Django 3.2 support, NB, baseconv removed in django 5.0
+        from django.utils import baseconv    
+        b62_decode, b62_encode = baseconv.base62.decode, baseconv.base62.encode
 
 __all__ = [
     "BadSignature",
